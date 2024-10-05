@@ -6,6 +6,9 @@ from fastapi_users.authentication import AuthenticationBackend, BearerTransport,
 from fastapi_users import FastAPIUsers
 from .models import User
 from .manager import get_user_manager
+from fastapi import Depends, HTTPException, status
+
+from src.auth.models import User
 from src.config import SECRET
 
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
@@ -28,3 +31,12 @@ fastapi_users = FastAPIUsers[User, int](
 )
 
 current_user = fastapi_users.current_user()
+current_super_user = fastapi_users.current_user(active=True, superuser=True)
+
+async def is_authenticated(user: User = Depends(current_user)):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
+    return user

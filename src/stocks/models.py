@@ -32,7 +32,7 @@ class Stock(Base):
 	id: Mapped[int] = mapped_column(primary_key=True)
 	ticker: Mapped[str] = mapped_column(String(6), unique=True)
 	exchange_id: Mapped[int] = mapped_column(ForeignKey("exchange.id"))
-	price: Mapped[int] = mapped_column(Integer)
+	price: Mapped[str] = mapped_column(String(10))
 
 class TransactionType(str, Enum):
     BUY = "BUY"
