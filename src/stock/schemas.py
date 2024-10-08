@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator, FieldValidationInfo
-from src.stocks.utils import get_ticker_value, is_valid_ticker as is_valid
+from src.stock.utils import get_ticker_value, is_valid_ticker as is_valid
 
 
 class StockCreate(BaseModel):

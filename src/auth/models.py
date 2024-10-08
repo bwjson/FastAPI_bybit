@@ -3,6 +3,7 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from src.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import MetaData, Boolean, ForeignKey, Integer, String
+from src.wallet.models import Wallet
 
 metadata = MetaData()
 

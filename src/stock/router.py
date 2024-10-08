@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from .utils import get_ticker_value as get_value, is_valid_ticker
 from sqlalchemy.ext.asyncio import AsyncSession
+from .utils import get_ticker_value as get_value, is_valid_ticker
 from src.database import get_async_session
 from sqlalchemy import select, insert
 from .schemas import StockCreate, StockDelete, StockUpdate
@@ -30,7 +30,7 @@ def get_ticker_value(ticker=None, user: User = Depends(is_authenticated)):
 async def add_stock(new_stock: StockCreate, session: AsyncSession = Depends(get_async_session), user: User = Depends(current_super_user)):
 	if is_valid_ticker(new_stock.ticker):
 		try:
-			stmt = insert(Stock).values(**new_stock.dict())
+			stmt = insert(Stock).values(new_stock.model_dump())
 			await session.execute(stmt)
 			await session.commit()
 			return {"status": "success"}

@@ -9,7 +9,7 @@ class UserRead(schemas.BaseUser[int]):
 	is_verified: bool
 
 	class Config:
-		orm_mode = True
+		from_attributes = True
 
 class UserCreate(schemas.BaseUser[int]):
 	email: str
