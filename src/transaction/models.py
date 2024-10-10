@@ -10,6 +10,7 @@ class TransactionType(str, Enum):
     BUY = "BUY"
     SELL = "SELL"
 
+# wallet 
 class Transaction(Base):
 	__tablename__ = "transaction"
 
@@ -17,7 +18,11 @@ class Transaction(Base):
 	wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id"))
 	exchange_id: Mapped[int] = mapped_column(ForeignKey("exchange.id"))
 	stock: Mapped[str] = mapped_column(String(10), nullable=False)
+	price: Mapped[int] = mapped_column(Integer, nullable=False)
 	amount: Mapped[int] = mapped_column(Integer, nullable=False)
 	type: Mapped[TransactionType] = mapped_column(SqlEnum(TransactionType, name="transactiontype", create_type=False))
       
 	extend_existing = True
+      
+# class WalletTransaction(Base):
+#       ...

@@ -32,26 +32,7 @@ async def create_transaction(
 			detail=str(e)
 		)
 
-	# query = select(Wallet).filter_by(user_id=user.id)
-	# wallet_data = await session.execute(query)
-	# has_wallet = wallet_data.scalar_one_or_none()
-
-	# query = select(Exchange).filter_by(id=new_transaction.exchange_id)
-	# exchange_data = await session.execute(query)
-	# is_valid_exchange = exchange_data.scalar_one_or_none()
-
-
-	# if has_wallet is None:
-	# 	raise HTTPException(
-	# 		status_code=400,
-	# 		detail="you should create wallet first"
-	# 	)
 	
-	# if is_valid_exchange is None:
-	# 	raise HTTPException(
-	# 		status_code=400,
-	# 		detail="there is no such exchange id"
-	# 	)
 	
 	
 

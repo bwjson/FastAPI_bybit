@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, TIMESTAMP, ForeignKey, JSON, Boolean, MetaData
+from sqlalchemy import Table, Column, Integer, String, TIMESTAMP, ForeignKey, JSON, Boolean, MetaData, Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy import Enum as SqlEnum
@@ -11,6 +11,7 @@ class Wallet(Base):
 
 	id: Mapped[int] = mapped_column(primary_key=True)
 	user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+	balance: Mapped[Numeric] = mapped_column(Numeric(precision=10, scale=2), default=0.00, nullable=False)
 	stocks: Mapped[dict] = mapped_column(JSON, default={}, nullable=True)
 	created_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, server_default=func.now())
 	updated_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, server_default=func.now(), onupdate=func.now())

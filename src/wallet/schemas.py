@@ -4,6 +4,7 @@ from src.stock.utils import is_valid_ticker
 
 class WalletCreate(BaseModel):	
 	stocks: dict
+	
 
 	@field_validator("stocks", mode="before")
 	def set_price_from_parser(cls, value: dict, values: FieldValidationInfo):

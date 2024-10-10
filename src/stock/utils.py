@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 
 def is_valid_ticker(ticker):
+	ticker = str(ticker)
 	ticker = ticker.upper().strip()
 	url = f'https://kase.kz/ru/shares/show/{ticker}/'
 
@@ -11,7 +12,7 @@ def is_valid_ticker(ticker):
 	except:
 		return False
 	return True
-		
+
 		
 def get_ticker_value(ticker):
 	ticker = ticker.upper().strip()
