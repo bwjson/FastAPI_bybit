@@ -10,14 +10,14 @@ class AbstractRepository(ABC):
 	@abstractmethod
 	async def create_one():
 		raise NotImplementedError
+	@abstractmethod
+	async def delete_one():
+		raise NotImplementedError
 	# @abstractmethod
 	# async def get_all():
 	# 	raise NotImplementedError
 	# @abstractmethod
 	# async def get_one():
-	# 	raise NotImplementedError
-	# @abstractmethod
-	# async def delete_one():
 	# 	raise NotImplementedError
 	# @abstractmethod
 	# async def update_one():
@@ -39,14 +39,25 @@ class SQLAlchemyRepository(AbstractRepository):
 					status_code=400,
 					detail=str(e)
 				)
-			
+
+	async def delete_one(self, id) -> int:
+		async with async_session_maker() as session:
+			try:
+				stmt = delete(self.model).where(self.model.id == id).returning(self.model.id)
+				res = await session.execute(stmt)
+				await session.commit()
+				return res.scalar_one() 
+			except SQLAlchemyError as e:
+				await session.rollback()
+				raise HTTPException(
+					status_code=400,
+					detail=str(e)
+				)
+				
 		# async def get_all(self, data:dict) -> int:
 		# 	...
 
 		# async def get_one(self, data: dict) -> int:
-		# 	...
-
-		# async def delete_one(self, data: dict) -> int:
 		# 	...
 
 		# async def update_one(self, data: dict) -> int:

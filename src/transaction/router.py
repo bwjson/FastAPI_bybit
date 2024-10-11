@@ -31,6 +31,24 @@ async def create_transaction(
 			status_code=400,
 			detail=str(e)
 		)
+	
+@router.get("/stakan-check")
+async def stakan_check(
+	transaction_service: Annotated[TransactionService, Depends(transaction_service)],
+):
+	try:
+		await transaction_service.check_transaction_match()
+		return {
+			"status": "success"
+		}
+	except Exception as e:
+		return HTTPException(
+			status_code=400,
+			detail=str(e)
+		)
+	
+
+
 
 	
 	
