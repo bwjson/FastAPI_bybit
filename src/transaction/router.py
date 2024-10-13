@@ -5,7 +5,7 @@ from src.auth.models import User
 from src.transaction.schemas import TransactionCreate, WalletTransactionCreate
 from src.transaction.service import TransactionService
 from src.transaction.dependencies import transaction_service
-from src.transaction.tasks import check_match
+from src.transaction.utils import check_match
 import asyncio
 
 router = APIRouter(

@@ -1,13 +1,14 @@
 from src.repository import SQLAlchemyRepository
-from src.transaction.models import Transaction
+from src.transaction.models import Transaction, WalletTransaction
 from fastapi import Depends, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import insert, select, delete, update, values
+from sqlalchemy import insert, select, delete, update, values, func
 from src.database import get_async_session, async_session_maker
 from src.transaction.models import Transaction
 from src.wallet.models import Wallet
-from src.stock.models import *
-from src.stock.utils import is_valid_ticker
+from src.stock.models import Stock
+from src.exchange.models import Exchange
+from src.stock.utils import KaseAPIClient
 import json
 
 class TransactionRepository(SQLAlchemyRepository):
@@ -24,21 +25,9 @@ class TransactionRepository(SQLAlchemyRepository):
 					status_code=400,
 					detail=str(e)
 				)
-			
-	async def exchange_exists(self, cur_exchange_id: int) -> bool:
-		async with async_session_maker() as session:
-			try:
-				query = select(Exchange).filter_by(id=cur_exchange_id)
-				res = await session.execute(query)
-				return True if res.scalar_one_or_none() is not None else False
-			except SQLAlchemyError as e:
-				raise HTTPException(
-					status_code=400,
-					detail=str(e)
-				)
-	
+					
 	async def ticker_exists(self, ticker: str) -> bool:
-		if is_valid_ticker(ticker):
+		if KaseAPIClient.is_valid_ticker(ticker):
 			return True
 		return False
 	
@@ -157,7 +146,71 @@ class TransactionRepository(SQLAlchemyRepository):
 				"status": "success"
 			}
 
+	async def get_blocked_funds(self, wallet_id: int, exchange_id: int) -> int:
+		async with async_session_maker() as session:
+			try:
+				query = select(func.sum(Transaction.amount * Transaction.price)).filter_by(wallet_id=wallet_id, exchange_id=exchange_id)
+				response = await session.execute(query)	
+				blocked_funds = response.scalar_one_or_none()
+
+				if blocked_funds is None:
+					return 0
+				return blocked_funds
+			
+			except SQLAlchemyError as e:
+				raise HTTPException(
+					status_code=400,
+					detail=str(e)
+				)
 				
-	
+	async def get_blocked_stocks(self, wallet_id: int, stock: str, exchange_id: int) -> int:
+		async with async_session_maker() as session:
+			try:
+				query = select(func.sum(Transaction.amount)).filter_by(wallet_id=wallet_id, stock=stock, exchange_id=exchange_id)
+				response = await session.execute(query)
+				blocked_stocks = response.scalar_one_or_none()
+				print(blocked_stocks)
+
+				if blocked_stocks is None:
+					return 0
+				return blocked_stocks
+			except SQLAlchemyError as e:
+				raise HTTPException(
+					status_code=400,
+					detail=str(e)
+				)
+			
+	async def change_wallet_balance(self, wallet_id, new_balance):
+		async with async_session_maker() as session:
+			try:
+				stmt = update(Wallet).filter_by(id=wallet_id).values(balance=new_balance).returning(Wallet.id)
+				response = await session.execute(stmt)
+				await session.commit()
+
+				if response is None:
+					raise HTTPException(status_code=404, detail="Wallet ID not found.")
+				return {
+					"wallet_id": wallet_id
+				}
+			except SQLAlchemyError as e:
+				await session.rollback()
+				raise HTTPException(
+					status_code=400,
+					detail=str(e)
+				)
+
+	async def create_one_wallet_transaction(self, data: dict) -> int:
+		async with async_session_maker() as session:
+			try:
+				stmt = insert(WalletTransaction).values(data).returning(WalletTransaction.id)
+				res = await session.execute(stmt)
+				await session.commit()
+				return res.scalar_one() 
+			except SQLAlchemyError as e:
+				await session.rollback()
+				raise HTTPException(
+					status_code=400,
+					detail=str(e)
+				)
 
 	 

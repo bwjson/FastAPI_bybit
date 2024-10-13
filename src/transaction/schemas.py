@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from src.transaction.models import TransactionType
+from src.transaction.models import TransactionType, WalletTransactionType
 
 class TransactionCreate(BaseModel):
 	exchange_id: int
@@ -11,4 +11,5 @@ class TransactionCreate(BaseModel):
 class WalletTransactionCreate(BaseModel):
 	exchange_id: int
 	deposit: int
-	type: TransactionType
+	type: WalletTransactionType
+
