@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from src.transaction.schemas import TransactionCreate
+from src.transaction.schemas import TransactionCreate, WalletTransactionCreate
 from src.transaction.repository import TransactionRepository
 
 
@@ -48,6 +48,11 @@ class TransactionService:
 					status_code=400,
 					detail="Your balance is lower than cost of transaction"
 				)
+		else: 
+			raise HTTPException(
+				status_code=400,
+				detail="There is no such type of transaction"
+			)
 		
 		wallet_id = await self.trans_repo.get_wallet_id(user.id)
 		transaction_dict = new_transaction.model_dump()
@@ -58,8 +63,27 @@ class TransactionService:
 			"status": "success",
 			"new_transaction": new_transaction
 		}
-
+	
+	async def create_wallet_transaction(self, new_transaction: WalletTransactionCreate, user):
+		if not await self.trans_repo.wallet_exists(user.id):
+			raise HTTPException(
+				status_code=400,
+				detail="You should create wallet first"
+			)
+		
+		if not await self.trans_repo.exchange_exists(new_transaction.exchange_id):
+			raise HTTPException(
+				status_code=400,
+				detail="There is no such exchange with this ID"
+			)
+		
+		if new_transaction.type == 'TOPUP':
+			...
+		elif new_transaction.type == 'WITHDRAW':
+			...
+	
 	async def check_transaction_match(self):
+		print("check_transaction_match method called")
 		sell_orders = await self.trans_repo.get_sell_orders()
 		buy_orders = await self.trans_repo.get_buy_orders()
 
@@ -74,6 +98,8 @@ class TransactionService:
 				if not sell_order.wallet_id != buy_order.wallet_id:
 					break
 				await self.execute_order(sell_order, buy_order)
+				return
+				
 				
 
 	async def execute_order(self, buy_transaction, sell_transaction):
@@ -84,18 +110,6 @@ class TransactionService:
 		await self.trans_repo.delete_one(buy_transaction.id)
 		await self.trans_repo.delete_one(sell_transaction.id)
 
-
-		# elif new_transaction == 'TOPUP':
-		# 	...
-
-		# elif new_transaction == 'WITHDRAW':
-		# 	...
-
-		# else: 
-		# 	raise HTTPException(
-		# 		status_code=400,
-		# 		detail="There is no such type of transaction"
-		# 	)
  
 		
 

@@ -7,3 +7,8 @@ class TransactionCreate(BaseModel):
 	amount: int
 	price: int
 	type: TransactionType
+
+class WalletTransactionCreate(BaseModel):
+	exchange_id: int
+	deposit: int
+	type: TransactionType

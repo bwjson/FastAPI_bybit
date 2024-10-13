@@ -9,8 +9,11 @@ from src.database import Base
 class TransactionType(str, Enum):
     BUY = "BUY"
     SELL = "SELL"
+    
+class WalletTransactionType(str, Enum):
+	TOPUP = "TOPUP"
+	WITHDRAW = "WITHDRAW"
 
-# wallet 
 class Transaction(Base):
 	__tablename__ = "transaction"
 
@@ -24,5 +27,13 @@ class Transaction(Base):
       
 	extend_existing = True
       
-# class WalletTransaction(Base):
-#       ...
+class WalletTransaction(Base):
+	__tablename__ = "wallet_transaction"
+
+	id: Mapped[int] = mapped_column(primary_key=True)
+	wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id"))
+	exchange_id: Mapped[int] = mapped_column(ForeignKey("exchange.id"))
+	deposit: Mapped[int] = mapped_column(Integer, nullable=False)
+	type: Mapped[TransactionType] = mapped_column(SqlEnum(WalletTransactionType, name="wallettransactiontype", create_type=False))
+      
+	extend_existing = True

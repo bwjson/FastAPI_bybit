@@ -43,10 +43,16 @@ class SQLAlchemyRepository(AbstractRepository):
 	async def delete_one(self, id) -> int:
 		async with async_session_maker() as session:
 			try:
-				stmt = delete(self.model).where(self.model.id == id).returning(self.model.id)
+				stmt = delete(self.model).where(self.model.id==id).returning(self.model.id)
 				res = await session.execute(stmt)
 				await session.commit()
-				return res.scalar_one() 
+				response = res.scalar_one_or_none()
+				if response is None:
+					return {
+						"status": "failed",
+						"error": "id not found"
+					}
+				return response
 			except SQLAlchemyError as e:
 				await session.rollback()
 				raise HTTPException(
