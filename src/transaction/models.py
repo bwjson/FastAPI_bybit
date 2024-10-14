@@ -9,31 +9,31 @@ from src.database import Base
 class TransactionType(str, Enum):
     BUY = "BUY"
     SELL = "SELL"
-    
+
 class WalletTransactionType(str, Enum):
-	TOPUP = "TOPUP"
-	WITHDRAW = "WITHDRAW"
+    TOPUP = "TOPUP"
+    WITHDRAW = "WITHDRAW"
 
 class Transaction(Base):
-	__tablename__ = "transaction"
+    __tablename__ = "transaction"
 
-	id: Mapped[int] = mapped_column(primary_key=True)
-	wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id"))
-	exchange_id: Mapped[int] = mapped_column(ForeignKey("exchange.id"))
-	stock: Mapped[str] = mapped_column(String(10), nullable=False)
-	price: Mapped[int] = mapped_column(Integer, nullable=False)
-	amount: Mapped[int] = mapped_column(Integer, nullable=False)
-	type: Mapped[TransactionType] = mapped_column(SqlEnum(TransactionType, name="transactiontype", create_type=False))
-      
-	extend_existing = True
-      
+    id: Mapped[int] = mapped_column(primary_key=True)
+    wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id"))
+    exchange_id: Mapped[int] = mapped_column(ForeignKey("exchange.id"))
+    stock: Mapped[str] = mapped_column(String(10), nullable=False)
+    price: Mapped[int] = mapped_column(Integer, nullable=False)
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    type: Mapped[TransactionType] = mapped_column(SqlEnum(TransactionType, name="transactiontype", create_type=False))
+
+    extend_existing = True
+
 class WalletTransaction(Base):
-	__tablename__ = "wallet_transaction"
+    __tablename__ = "wallet_transaction"
 
-	id: Mapped[int] = mapped_column(primary_key=True)
-	wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id"))
-	exchange_id: Mapped[int] = mapped_column(ForeignKey("exchange.id"))
-	deposit: Mapped[int] = mapped_column(Integer, nullable=False)
-	type: Mapped[TransactionType] = mapped_column(SqlEnum(WalletTransactionType, name="wallettransactiontype", create_type=False))
-      
-	extend_existing = True
+    id: Mapped[int] = mapped_column(primary_key=True)
+    wallet_id: Mapped[int] = mapped_column(ForeignKey("wallet.id"))
+    exchange_id: Mapped[int] = mapped_column(ForeignKey("exchange.id"))
+    deposit: Mapped[int] = mapped_column(Integer, nullable=False)
+    type: Mapped[TransactionType] = mapped_column(SqlEnum(WalletTransactionType, name="wallettransactiontype", create_type=False))
+
+    extend_existing = True

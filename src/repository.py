@@ -11,19 +11,19 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def create_one(self, data: dict) -> int:
         raise NotImplementedError
-    
+
     @abstractmethod
     async def delete_one(self, id: int) -> dict:
         raise NotImplementedError
-    
+
     @abstractmethod
     async def update_one(self, id: int, field: str, new_value: str) -> dict:
         raise NotImplementedError
-    
+
     @abstractmethod
     async def get_all(self) -> list:
         raise NotImplementedError
-    
+
     @abstractmethod
     async def get_one(self, id: int) -> dict:
         raise NotImplementedError
@@ -92,7 +92,7 @@ class SQLAlchemyRepository(AbstractRepository):
                 return result
             except SQLAlchemyError as e:
                 raise HTTPException(status_code=400, detail=str(e))
-                
+
     async def exchange_exists(self, cur_exchange_id: int) -> bool:
         async with async_session_maker() as session:
             try:
@@ -110,7 +110,7 @@ class SQLAlchemyRepository(AbstractRepository):
             try:
                 query = select(Wallet).filter_by(user_id=cur_user_id)
                 res = await session.execute(query)
-                return True if res.scalar_one_or_none() is not None else False 
+                return True if res.scalar_one_or_none() is not None else False
             except SQLAlchemyError as e:
                 raise HTTPException(
                     status_code=400,
