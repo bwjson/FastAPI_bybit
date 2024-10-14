@@ -12,18 +12,6 @@ from src.stock.utils import KaseAPIClient
 
 class TransactionRepository(SQLAlchemyRepository):
 	model = Transaction
-
-	async def wallet_exists(self, cur_user_id: int) -> bool:
-		async with async_session_maker() as session:
-			try:
-				query = select(Wallet).filter_by(user_id=cur_user_id)
-				res = await session.execute(query)
-				return True if res.scalar_one_or_none() is not None else False 
-			except SQLAlchemyError as e:
-				raise HTTPException(
-					status_code=400,
-					detail=str(e)
-				)
 					
 	async def ticker_exists(self, ticker: str) -> bool:
 		if KaseAPIClient.is_valid_ticker(ticker):

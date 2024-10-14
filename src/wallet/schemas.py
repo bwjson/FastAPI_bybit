@@ -1,26 +1,19 @@
 from pydantic import BaseModel
+from typing import Union
 
 
-class WalletCreate(BaseModel):	
+class WalletCreate(BaseModel):
 	stocks: dict
-	# @field_validator("stocks", mode="before")
-	# def set_price_from_parser(cls, value: dict, values: FieldValidationInfo):
-	# 	if not isinstance(value, dict):
-	# 		raise ValueError("Stocks must be JSON")
-		
-	# 	for key, val in value.items():
-	# 		if not isinstance(key, str):
-	# 			raise ValueError(f"Invalid key '{key}': all keys must be strings")
-	# 		if not is_valid_ticker(key):
-	# 			raise ValueError(f"Ticker: {key} not found on exchanges")
-	# 		if not isinstance(val, (int, float)):
-	# 			raise ValueError(f"Invalid value for '{key}': all values must be numbers")
 			
-	# 	print(value)
-	# 	return value
+class WalletDelete(BaseModel):
+	id: int
+    
+class WalletUpdate(BaseModel):
+	id: int
+	field: str
+	new_value: Union[int, float, dict]
 	
-	class Config:
-		from_attributes = True
+	
 
 	
 

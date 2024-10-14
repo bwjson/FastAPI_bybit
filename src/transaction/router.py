@@ -5,13 +5,12 @@ from src.auth.models import User
 from src.transaction.schemas import TransactionCreate, WalletTransactionCreate
 from src.transaction.service import TransactionService
 from src.transaction.dependencies import transaction_service
-# from src.transaction.tasks import send_email_report_dashboard
 from src.transaction.utils import check_match
 import asyncio
 
 router = APIRouter(
 	prefix="/api/transaction",
-	tags=["Transaction"]
+	tags=["transaction"]
 )
 
 @router.post("/create-order")
@@ -48,15 +47,6 @@ async def create_wallet_transaction(
 async def order_book_check():
 	asyncio.create_task(check_match()) 
 	return {"status": "Task started"}
-
-# @router.get("/dashboard")
-# def get_dashboard_report(user=Depends(is_authenticated)):
-#     send_email_report_dashboard.delay(user.username)
-#     return {
-#         "status": 200,
-#         "data": "Письмо отправлено",
-#         "details": None
-#     }
 	
 
 

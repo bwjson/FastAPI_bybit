@@ -3,3 +3,5 @@ from src.wallet.models import Wallet
 
 class WalletRepository(SQLAlchemyRepository):
 	model = Wallet
+
+	

@@ -6,6 +6,7 @@ from .models import *
 from src.auth.models import *
 from src.auth.base_config import current_super_user, is_authenticated
 from src.stock.dependencies import stock_service
+from fastapi_cache.decorator import cache
 
 
 router = APIRouter(
@@ -18,11 +19,13 @@ async def add_stock(new_stock: StockCreate, stock_service: Annotated[StockServic
 	return await stock_service.create_one_stock(new_stock)
 
 @router.get("/get_all")
-async def delete_stock(stock_service: Annotated[StockService, Depends(stock_service)], user: User = Depends(is_authenticated)):
+@cache(expire=60)
+async def get_all_stocks(stock_service: Annotated[StockService, Depends(stock_service)], user: User = Depends(is_authenticated)):
 	return await stock_service.get_all_stocks()
 
 @router.get("/get_one/{stock_id}")
-async def delete_stock(stock_id: int,stock_service: Annotated[StockService, Depends(stock_service)], user: User = Depends(is_authenticated)):
+@cache(expire=60)
+async def get_stock(stock_id: int,stock_service: Annotated[StockService, Depends(stock_service)], user: User = Depends(is_authenticated)):
 	return await stock_service.get_one_stock(stock_id)
 
 
