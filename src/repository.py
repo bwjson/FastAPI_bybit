@@ -5,6 +5,7 @@ from sqlalchemy import insert, select, delete, update
 from src.database import async_session_maker
 from src.exchange.models import Exchange
 from src.wallet.models import Wallet
+import requests
 
 class AbstractRepository(ABC):
 	@abstractmethod
