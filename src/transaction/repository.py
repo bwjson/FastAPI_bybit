@@ -1,15 +1,14 @@
+import json
 from src.repository import SQLAlchemyRepository
 from src.transaction.models import Transaction, WalletTransaction
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import insert, select, delete, update, values, func
-from src.database import get_async_session, async_session_maker
+from sqlalchemy import insert, select, update, func
+from src.database import async_session_maker
 from src.transaction.models import Transaction
 from src.wallet.models import Wallet
-from src.stock.models import Stock
-from src.exchange.models import Exchange
 from src.stock.utils import KaseAPIClient
-import json
+
 
 class TransactionRepository(SQLAlchemyRepository):
 	model = Transaction

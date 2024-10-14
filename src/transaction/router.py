@@ -5,6 +5,7 @@ from src.auth.models import User
 from src.transaction.schemas import TransactionCreate, WalletTransactionCreate
 from src.transaction.service import TransactionService
 from src.transaction.dependencies import transaction_service
+# from src.transaction.tasks import send_email_report_dashboard
 from src.transaction.utils import check_match
 import asyncio
 
@@ -20,7 +21,7 @@ async def create_transaction(
 	user: User = Depends(is_authenticated)
 ):
 	try:
-		response = await transaction_service.create_validated_transaction(new_transaction, user)
+		response = await transaction_service.create_transaction(new_transaction, user)
 		return response
 	except Exception as e:
 		return HTTPException(
@@ -29,7 +30,7 @@ async def create_transaction(
 		)
 	
 @router.post("/create-wallet")
-async def create_transaction(
+async def create_wallet_transaction(
 	new_transaction: WalletTransactionCreate, 
 	transaction_service: Annotated[TransactionService, Depends(transaction_service)],
 	user: User = Depends(is_authenticated)
@@ -43,25 +44,19 @@ async def create_transaction(
 			detail=str(e)
 		)
 	
-@router.get("/stakan")
-async def stakan_check():
+@router.get("/order_book")
+async def order_book_check():
 	asyncio.create_task(check_match()) 
 	return {"status": "Task started"}
-	
-# @router.get("/stakan-check")
-# async def stakan_check(
-# 	transaction_service: Annotated[TransactionService, Depends(transaction_service)],
-# ):
-# 	try:
-# 		await transaction_service.check_transaction_match()
-# 		return {
-# 			"status": "success"
-# 		}
-# 	except Exception as e:
-# 		return HTTPException(
-# 			status_code=400,
-# 			detail=str(e)
-# 		)
+
+# @router.get("/dashboard")
+# def get_dashboard_report(user=Depends(is_authenticated)):
+#     send_email_report_dashboard.delay(user.username)
+#     return {
+#         "status": 200,
+#         "data": "Письмо отправлено",
+#         "details": None
+#     }
 	
 
 
