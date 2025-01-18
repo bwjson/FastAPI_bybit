@@ -30,11 +30,11 @@ async def get_wallet(wallet_id: int, wallet_service: Annotated[WalletService, De
 
 
 @router.patch("/update_wallet")
-async def update_stock(updated_wallet: WalletUpdate, wallet_service: Annotated[WalletService, Depends(wallet_service)], user: User = Depends(current_super_user)):
+async def update_wallet(updated_wallet: WalletUpdate, wallet_service: Annotated[WalletService, Depends(wallet_service)], user: User = Depends(current_super_user)):
     return await wallet_service.update_one_wallet(updated_wallet.id, updated_wallet.field, updated_wallet.new_value)
 
 
 @router.delete("/delete_wallet")
-async def delete_stock(deleted_wallet: WalletDelete, wallet_service: Annotated[WalletService, Depends(wallet_service)], user: User = Depends(current_super_user)):
+async def delete_wallet(deleted_wallet: WalletDelete, wallet_service: Annotated[WalletService, Depends(wallet_service)], user: User = Depends(current_super_user)):
     return await wallet_service.delete_one_wallet(deleted_wallet.id)
 

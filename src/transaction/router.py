@@ -43,6 +43,7 @@ async def create_wallet_transaction(
             detail=str(e)
         )
 
+
 @router.get("/order_book")
 async def order_book_check():
     asyncio.create_task(check_match())
